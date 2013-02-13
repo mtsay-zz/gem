@@ -1,0 +1,23 @@
+  The solution can be build and run on out-of-box Linux/Unix environments. It's written in C/C++ and can be compiled by the latest GCC. It only uses <string.h> and <stdio.h> so you shouldn't need any additional setup to compile and run this.
+
+to build:
+  g++ main.cc -o main
+
+to run:
+  ./main
+
+  For additional info on the solution, read the source code or the following TL paragraph.
+
+SOLN:
+-----
+My idea to solve this problem is to keep track of the number of ways to solve various portions of the 1x2^NxK wall, and using those previously computed values to build and compute the bigger wall until we reach 1x2^NxK.
+
+To start off, we first need the number of ways to build a 1x1xk portions for all k such that 1 <= k <= K. These values can be easily computed since you only have 2 choices of blocks and K is at most 5. 
+
+The next thing we want is to solve: given a particular configuration of a 1x1xk wall, how many ways are there for us to arrive at another configuration of 1x2xk wall. By configuration, I meant that the right most column of the wall has certain cells filled in using a 1x1x2 block. This way of counting configurations avoids all sorts of double counting and allows us to accurate count the number of ways to go from one configuration to another. 
+
+The number of ways to go from one configuration to another is kept track in a transition matrix. And each time we apply the matrix, we advance the partial wall 1 unit wider. For ex, if T is the transition matrix, and A is the matrix of number of ways to go from configurations of 1x1xK wall to configurations of 1xWxK wall, then T * A is the number of ways to go from configurations of 1x1xK wall to configurations of 1xW+1xK wall. Sounds complicated? It's easier to explain with a picture.
+
+After the previous is established, then solving the original problem, finding number of ways to build a 1x2^NxK wall, is reduced to multiplying the transition matrix by itself 2^N times and take the (0, 0) value. I merely used a simple matrix multiplication algorithm and repeatedly square the transition matrix N times to arrive at the solution.
+
+This problem was hard and fun, and math is wonderful! :)
