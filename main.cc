@@ -1,3 +1,7 @@
+/*
+  For a better and more detailed explanation of how this solution works, see README
+ */
+
 #include<stdio.h>
 #include<string.h>
 
@@ -25,14 +29,18 @@ int t1[6];
 /*
   given an integer 0 <= N < 32, first express N in binary form
     for example, 13 = 01101, 
-  then a bit of 0 indicates an open hole in the row
-  whereas a bit of 1 indicates an occupied hole in the row
+  then a bit of 0 indicates an open cell in the row
+  whereas a bit of 1 indicates an occupied cell in the row
 
   table[X][Y] indicates the number of ways to go from a row of
     configuration X to configuration Y
+
+  also doubles as the transition matrix and storage for the final
+    matrix
  */
 int table[32][32]; 
 
+// initialize the lookup table T1
 void initializeT1() {
   t1[0] = 1;
   t1[1] = 1;
@@ -43,6 +51,7 @@ void initializeT1() {
 }
 
 // pre: K <= 5
+// populates table[i][j]
 int solveTableCell(int K, int i, int j) {
   if ((i & j) > 0)
     return 0;
@@ -65,6 +74,7 @@ int solveTableCell(int K, int i, int j) {
 }
 
 // pre: K <= 5
+// populates table/transition matrix
 void initializeTable(int K) {
   for (int i = 0; i < (1 << K); i++)
     for (int j = 0; j < (1 << K); j++)
@@ -73,6 +83,7 @@ void initializeTable(int K) {
 
 // given x, y, compute the index of the x-th row and y-th column on a 32x32 matrix
 #define idx(x,y) ((x * 32) + y)
+
 // square the table pointed by from and store the output to the table
 //   pointed by to
 void squareTable(int *from, int *to) {
@@ -108,27 +119,8 @@ void exponentiateTable(int N) {
   delete[] q;
 }
 
-// The trick to solving this question is to model the problem as 
-//   transitioning from state to state. This can be done by first
-//   computing a table which keep tracks of number of ways to 
-//   transition from one state to another. Then by repeatly
-//   applying the table as a matrix to itself, you can compute
-//   the number of ways to transition from one state to another
-//   using exactly N transitions.
-
-// Then all we have to do is to start with the a row of size 1x1xK;
-//   its initial configuration is 0 since the first row is initially
-//   clear. Whenever we apply a single transition, we are basically
-//   keeping track of the number of ways to start from a row with
-//   given configuration and then end up with a wall exactly 1 unit
-//   wider and with another configuration.
-
-// Hence, the number of ways to fill a 1x2^NxK wall is kept track of
-//   in the (0, 0) cell of the transition matrix to the 2^N power.
-// All that remains is to compute the transition matrix to the
-//   2^N power, which I merely implemented a simple algorithm
-//   that repeatedly square itself N times using the simplest matrix
-//   multiplication.
+// for a better and more detailed explanation of how this solution
+//   works, read about it in README
 int solve(int N, int K) {
   // technically only needs to be done once, but it's fast anyway
   initializeT1();
